@@ -1,6 +1,8 @@
 import typer
+import boto3
+from dotenv import load_dotenv
 
-
+load_dotenv()
 app = typer.Typer()
 
 
@@ -16,5 +18,6 @@ def deploy():
     """
     Deploy function
     """
-    typer.echo("Hello. You are codehooked.")
-    
+    s3 = boto3.resource("s3")
+    for bucket in s3.buckets.all(): # type: ignore
+        typer.echo(bucket.name)
