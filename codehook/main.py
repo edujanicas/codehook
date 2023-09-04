@@ -4,7 +4,7 @@ import logging
 from rich import print
 from rich.prompt import Prompt
 from dotenv import load_dotenv
-from .lambda_deployer import LambdaDeployer
+from .LambdaDeployer import LambdaDeployer
 
 logger = logging.getLogger(__name__)
 load_dotenv()
