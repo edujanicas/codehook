@@ -191,3 +191,24 @@ class RestWrapper:
         except ClientError:
             logger.exception("Couldn't delete REST API %s.", api_id)
             raise
+
+    def get_rest_apis(self):
+        """
+        Gets the ID of a REST API from its name by searching the list of REST APIs
+        for the current account. Because names need not be unique, this returns only
+        the first API with the specified name.
+
+        :param api_name: The name of the API to look up.
+        :return: A list with all rest apis
+        """
+        try:
+            rest_apis = []
+            paginator = self.apigateway_client.get_paginator("get_rest_apis")
+            page_iterator = paginator.paginate()
+            for page in page_iterator:
+                rest_apis.extend(page['items'])
+            return rest_apis
+        
+        except ClientError:
+            logger.exception("Couldn't list REST APIs.")
+            raise

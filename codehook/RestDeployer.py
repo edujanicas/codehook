@@ -16,10 +16,10 @@ import requests
 logger = logging.getLogger(__name__)
 
 class RestDeployer:
-    def __init__(self, basic_file, lambda_name, api_name):
+    def __init__(self, basic_file, name):
         self.basic_file = basic_file
-        self.lambda_name = lambda_name
-        self.api_name = api_name
+        self.lambda_name = name
+        self.api_name = name
 
     def deploy(self):
         """
