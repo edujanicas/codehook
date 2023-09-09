@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 class RestWrapper:
     def __init__(self, apigateway_client):
         self.apigateway_client = apigateway_client
+        self.tags = {"codehook": "true"}
 
     def create_rest_api(
         self,
@@ -57,7 +58,9 @@ class RestWrapper:
                 methods.
         """
         try:
-            response = self.apigateway_client.create_rest_api(name=api_name)
+            response = self.apigateway_client.create_rest_api(
+                name=api_name, tags=self.tags
+            )
             api_id = response["id"]
             logger.info("Create REST API %s with ID %s.", api_name, api_id)
         except ClientError:
@@ -206,9 +209,9 @@ class RestWrapper:
             paginator = self.apigateway_client.get_paginator("get_rest_apis")
             page_iterator = paginator.paginate()
             for page in page_iterator:
-                rest_apis.extend(page['items'])
+                rest_apis.extend(page["items"])
             return rest_apis
-        
+
         except ClientError:
             logger.exception("Couldn't list REST APIs.")
             raise
