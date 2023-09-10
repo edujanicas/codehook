@@ -115,13 +115,4 @@ class RestDeployer:
             f"REST API returned status {https_response.status_code}\n"
             f"Message: {json.loads(https_response.text)['message']}"
         )
-
-        print("Deleting the REST API, AWS Lambda function, and security role...")
-        time.sleep(5)  # Short sleep avoids TooManyRequestsException.
-        lambda_wrapper.delete_function(lambda_function_name)
-        for pol in iam_role.attached_policies.all():
-            pol.detach_role(RoleName=iam_role.name)
-        iam_role.delete()
-        print(f"Deleted role {iam_role.name}.")
-        rest_wrapper.delete_rest_api(api_id)
-        print("Thanks for watching!")
+        return (lambda_function_name, api_id)
