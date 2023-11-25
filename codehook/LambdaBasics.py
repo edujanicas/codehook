@@ -140,9 +140,10 @@ class LambdaWrapper:
         :return: The Amazon Resource Name (ARN) of the newly created function.
         """
         try:
+            # Functions do not list its tags, so the description identifies it as a codehook function
             response = self.lambda_client.create_function(
                 FunctionName=function_name,
-                Description="AWS Lambda doc example",
+                Description=str(self.tags),
                 Runtime="python3.8",
                 Role=iam_role.arn,
                 Handler=handler_name,
@@ -252,18 +253,15 @@ class LambdaWrapper:
         Lists the Lambda functions for the current account.
         """
         try:
-            func_paginator = self.lambda_client.get_paginator("list_functions")
-            for func_page in func_paginator.paginate():
-                for func in func_page["Functions"]:
-                    print(func["FunctionName"])
-                    desc = func.get("Description")
-                    if desc:
-                        print(f"\t{desc}")
-                    print(f"\t{func['Runtime']}: {func['Handler']}")
+            functions = []
+            paginator = self.lambda_client.get_paginator("list_functions")
+            page_iterator = paginator.paginate()
+            for page in page_iterator:
+                for function in page["Functions"]:
+                    # Functions do not list its tags, so the description identifies it as a codehook function
+                    if function["Description"] == str(self.tags):
+                        functions.append(function)
+            return functions
         except ClientError as err:
-            logger.error(
-                "Couldn't list functions. Here's why: %s: %s",
-                err.response["Error"]["Code"],
-                err.response["Error"]["Message"],
-            )
+            logger.exception("Couldn't list REST APIs.")
             raise
