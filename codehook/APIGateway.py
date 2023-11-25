@@ -1,24 +1,10 @@
-"""
-Purpose
-
-Shows how to use the AWS SDK for Python (Boto3) to use Amazon API Gateway to
-create a REST API backed by a Lambda function.
-
-Instead of using the low-level Boto3 client APIs shown in this example, you can use
-AWS Chalice to more easily create a REST API.
-
-    For a working code example, see the `lambda/chalice_examples/lambda_rest` example
-    in this GitHub repo.
-
-    For more information about AWS Chalice, see https://github.com/aws/chalice.
-"""
 import logging
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
 
 
-class RestWrapper:
+class APIGateway:
     def __init__(self, apigateway_client):
         self.apigateway_client = apigateway_client
         self.tags = {"codehook": "true"}

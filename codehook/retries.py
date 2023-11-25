@@ -1,5 +1,4 @@
 import logging
-import sys
 import time
 from botocore.exceptions import ClientError
 
@@ -8,27 +7,6 @@ logger = logging.getLogger(__name__)
 
 class MaxRetriesExceededError(Exception):
     pass
-
-
-def wait(seconds, tick=12):
-    """
-    Waits for a specified number of seconds, while also displaying an animated
-    spinner.
-
-    :param seconds: The number of seconds to wait.
-    :param tick: The number of frames per second used to animate the spinner.
-    """
-    progress = '|/-\\'
-    waited = 0
-    while waited < seconds:
-        for frame in range(tick):
-            sys.stdout.write(f"\r{progress[frame % len(progress)]}")
-            sys.stdout.flush()
-            time.sleep(1/tick)
-        waited += 1
-    sys.stdout.write("\r")
-    sys.stdout.flush()
-
 
 class ExponentialRetry:
     def __init__(self, func, error_code, max_sleep=32):

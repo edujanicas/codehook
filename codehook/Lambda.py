@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 
 
-class LambdaWrapper:
+class Lambda:
     def __init__(self, lambda_client, iam_resource):
         self.lambda_client = lambda_client
         self.iam_resource = iam_resource
@@ -59,7 +59,7 @@ class LambdaWrapper:
     def create_iam_role_for_lambda(self, iam_role_name):
         """
         Creates an IAM role that grants the Lambda function basic permissions. If a
-        role with the specified name already exists, it is used for the demo.
+        role with the specified name already exists, it is used instead.
 
         :param iam_role_name: The name of the role to create.
         :return: The role and a value that indicates whether the role is newly created.
@@ -251,6 +251,8 @@ class LambdaWrapper:
     def list_functions(self):
         """
         Lists the Lambda functions for the current account.
+
+        :return: A list of all codehook functions on the account
         """
         try:
             functions = []

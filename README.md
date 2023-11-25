@@ -26,3 +26,6 @@ Useful commands:
 codehook deploy tests/lambda_handler_rest.py
 codehook list
 ```
+
+## Project Structure
+

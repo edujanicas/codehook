@@ -4,9 +4,9 @@ import boto3
 import os.path
 from rich import print
 from dotenv import load_dotenv
-from .RestDeployer import RestDeployer
-from .RestBasics import RestWrapper
-from .LambdaBasics import LambdaWrapper
+from .Deployer import Deployer
+from .APIGateway import APIGateway
+from .Lambda import Lambda
 
 load_dotenv()
 app = typer.Typer()
@@ -20,6 +20,16 @@ Once the user has been created, see [blue link=https://docs.aws.amazon.com/IAM/l
 
 If you have the [blue link=http://aws.amazon.com/cli/]AWS CLI[/blue link] installed, then you can use the [bold]aws configure[/bold] command to configure your credentials file:
 """
+
+
+def init_aws() -> tuple[APIGateway, Lambda]:
+    iam_resource = boto3.resource("iam")
+    lambda_client = boto3.client("lambda")
+    apigateway_client = boto3.client("apigateway")
+    api_wrapper = APIGateway(apigateway_client)
+    lambda_wrapper = Lambda(lambda_client, iam_resource)
+
+    return api_wrapper, lambda_wrapper
 
 
 @app.callback()
@@ -64,13 +74,14 @@ def deploy(file: str, name: str = ""):
     """
     Deploy the function in FILE, optionally with a custom --name
     """
+    api_wrapper, lambda_wrapper = init_aws()
 
     if not name:
         name = os.path.splitext(os.path.basename(file))[0]
 
     print(f"Deploying [blue]{file}[/blue] as [blue]{name}[/blue] :rocket:")
 
-    rest_deployer = RestDeployer(file, name)
+    rest_deployer = Deployer(file, name, api_wrapper, lambda_wrapper)
     lambda_function_name, api_id = rest_deployer.deploy()
 
     print("[bold green]Deployment complete[/bold green] :rocket:")
@@ -83,26 +94,22 @@ def list():
     """
     List all the endpoints currently deployed by Codehook
     """
-    iam_resource = boto3.resource("iam")
-    lambda_client = boto3.client("lambda")
-    apigateway_client = boto3.client("apigateway")
-    rest_wrapper = RestWrapper(apigateway_client)
-    lambda_wrapper = LambdaWrapper(lambda_client, iam_resource)
+    api_wrapper, lambda_wrapper = init_aws()
 
     print(f"Listing all codehook endpoints...")
-    endpoints = rest_wrapper.get_rest_apis()
+    endpoints = api_wrapper.get_rest_apis()
 
     if endpoints:
         print(endpoints)
     else:
-        print("[bold red]No codehook endpoints[/bold red]")
+        print(f"[bold red]No codehook endpoints[/bold red]")
 
     print(f"Listing all lambda functions...")
     lambdas = lambda_wrapper.list_functions()
     if lambdas:
         print(lambdas)
     else:
-        print("[bold red]No lambda functions[/bold red]")
+        print(f"[bold red]No lambda functions[/bold red]")
 
 
 @app.command()
@@ -110,22 +117,15 @@ def delete(lambda_function_name: str, api_id: str):
     """
     Delete the REST API, AWS Lambda function, and security role
     """
-
-    iam_resource = boto3.resource("iam")
-    lambda_client = boto3.client("lambda")
-    apigateway_client = boto3.client("apigateway")
-
     print(
         f"[bold red]Deleting [/bold red][blue]{lambda_function_name}[/blue][bold red] and [/bold red][blue]{api_id}[/blue]"
     )
 
-    lambda_wrapper = LambdaWrapper(lambda_client, iam_resource)
-    rest_wrapper = RestWrapper(apigateway_client)
-
+    api_wrapper, lambda_wrapper = init_aws()
     lambda_wrapper.delete_function(lambda_function_name)
-    rest_wrapper.delete_rest_api(api_id)
+    api_wrapper.delete_rest_api(api_id)
 
-    print("[bold red]Deletion complete[/bold red]")
+    print(f"[bold red]Deletion complete[/bold red]")
 
 
 if __name__ == "__main__":
