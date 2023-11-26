@@ -5,7 +5,7 @@ import stripe
 # This is a public sample test API key.
 # Don’t submit any personally identifiable information in requests made with this key.
 # Sign in to see your own test API key embedded in code samples.
-stripe.api_key = 'sk_test_26PHem9AhJZvU623DfE1x4sd'
+stripe.api_key = "sk_test_26PHem9AhJZvU623DfE1x4sd"
 
 # Replace this endpoint secret with your endpoint's unique secret
 # If you are testing with the CLI, find the secret by running 'stripe listen'
@@ -69,8 +69,8 @@ def lambda_handler(event, context):
         # Otherwise use the basic event deserialized with json
         sig_header = headers.get("stripe-signature")
         try:
-            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
-        except stripe.error.SignatureVerificationError as e:
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret) # type: ignore
+        except stripe.error.SignatureVerificationError as e: # type: ignore
             print("⚠️  Webhook signature verification failed." + str(e))
             return {
                 "statusCode": response_code,
@@ -85,7 +85,7 @@ def lambda_handler(event, context):
                 ),
             }
         pass
-    
+
     # TODO
     # Handle the event
     # Handle the event

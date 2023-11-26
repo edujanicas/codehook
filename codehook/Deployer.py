@@ -1,6 +1,5 @@
 from rich import print
 
-import os.path
 import boto3
 from rich.progress import Progress
 import time
