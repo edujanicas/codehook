@@ -23,7 +23,9 @@ class Deployer:
             task = progress.add_task("[blue]Deploying codehook endpoint...", total=1000)
 
             print("Launching the AWS Deployer :rocket:")
-            lambda_filename = self.basic_file
+            # lambda_filename = self.basic_file
+            # TODO: Embed imported funtion onto the lambda file structure
+            lambda_filename = 'codehook/skeletons/lambda_handler_rest.py'
             lambda_handler_name = (
                 os.path.splitext(os.path.basename(lambda_filename))[0]
                 + ".lambda_handler"
