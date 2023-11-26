@@ -2,6 +2,7 @@ import io
 import json
 import logging
 import zipfile
+import pathlib
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
@@ -14,19 +15,21 @@ class Lambda:
         self.tags = {"codehook": "true"}
 
     @staticmethod
-    def create_deployment_package(source_file, destination_file):
+    def create_deployment_package(source_path):
         """
         Creates a Lambda deployment package in .zip format in an in-memory buffer. This
         buffer can be passed directly to Lambda when creating the function.
 
-        :param source_file: The name of the file that contains the Lambda handler
+        :param source_path: The path for the files that contains the Lambda handler
                             function.
-        :param destination_file: The name to give the file when it's deployed to Lambda.
         :return: The deployment package.
         """
+        directory = pathlib.Path(source_path)
+
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w") as zipped:
-            zipped.write(source_file, destination_file)
+            for source_file in directory.iterdir():
+                zipped.write(source_file, arcname=source_file.name)
         buffer.seek(0)
         return buffer.read()
 
@@ -126,7 +129,7 @@ class Lambda:
         return response
 
     def create_function(
-        self, function_name, handler_name, iam_role, deployment_package
+        self, function_name, handler_name, iam_role, deployment_package, layers
     ):
         """
         Deploys a Lambda function.
@@ -144,12 +147,13 @@ class Lambda:
             response = self.lambda_client.create_function(
                 FunctionName=function_name,
                 Description=str(self.tags),
-                Runtime="python3.8",
+                Runtime="python3.11",
                 Role=iam_role.arn,
                 Handler=handler_name,
                 Code={"ZipFile": deployment_package},
                 Publish=True,
                 Tags=self.tags,
+                Layers=layers
             )
             function_arn = response["FunctionArn"]
             waiter = self.lambda_client.get_waiter("function_active_v2")

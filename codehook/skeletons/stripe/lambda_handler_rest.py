@@ -1,11 +1,11 @@
 import json
 import logging
+import stripe
 
-# import stripe
 # This is a public sample test API key.
 # Don’t submit any personally identifiable information in requests made with this key.
 # Sign in to see your own test API key embedded in code samples.
-# stripe.api_key = 'sk_test_26PHem9AhJZvU623DfE1x4sd'
+stripe.api_key = 'sk_test_26PHem9AhJZvU623DfE1x4sd'
 
 # Replace this endpoint secret with your endpoint's unique secret
 # If you are testing with the CLI, find the secret by running 'stripe listen'
@@ -48,12 +48,14 @@ def lambda_handler(event, context):
     try:
         event = json.loads(payload)
     except json.decoder.JSONDecodeError as e:
-        print("⚠️  Webhook error while parsing basic request." + str(e))
+        print("Invalid webhook request: " + str(e))
         response_code = 400
         return {
             "statusCode": response_code,
             "body": json.dumps(
                 {
+                    "success": False,
+                    "message": str(e),
                     "input": event,
                     "method": http_method,
                     "query_string": query_string,
@@ -65,23 +67,23 @@ def lambda_handler(event, context):
     if endpoint_secret:
         # Only verify the event if there is an endpoint secret defined
         # Otherwise use the basic event deserialized with json
-        # sig_header = headers.get("stripe-signature")
-        # try:
-        #     event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
-        # except stripe.error.SignatureVerificationError as e:
-        #     print("⚠️  Webhook signature verification failed." + str(e))
-        #     return {
-        #         "statusCode": response_code,
-        #         "body": json.dumps(
-        #             {
-        #                 "input": event,
-        #                 "method": http_method,
-        #                 "query_string": query_string,
-        #                 "headers": headers,
-        #                 "body": body,
-        #             }
-        #         ),
-        #     }
+        sig_header = headers.get("stripe-signature")
+        try:
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+        except stripe.error.SignatureVerificationError as e:
+            print("⚠️  Webhook signature verification failed." + str(e))
+            return {
+                "statusCode": response_code,
+                "body": json.dumps(
+                    {
+                        "input": event,
+                        "method": http_method,
+                        "query_string": query_string,
+                        "headers": headers,
+                        "body": body,
+                    }
+                ),
+            }
         pass
     
     # TODO

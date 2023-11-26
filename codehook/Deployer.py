@@ -6,6 +6,8 @@ from rich.progress import Progress
 import time
 
 IAM_ROLE_NAME = "CODEHOOK_LAMBDA_ROLE"
+STRIPE_LAYER = "arn:aws:lambda:us-east-1:764755761259:layer:stripe_layer:4"
+
 
 class Deployer:
     def __init__(self, basic_file, name, rest_wrapper, lambda_wrapper):
@@ -19,20 +21,21 @@ class Deployer:
         """
         Deploy an AWS Lambda function and create a REST API
         """
-        with Progress(transient=True,) as progress:
+        with Progress(
+            transient=True,
+        ) as progress:
             task = progress.add_task("[blue]Deploying codehook endpoint...", total=1000)
 
             print("Launching the AWS Deployer :rocket:")
             # lambda_filename = self.basic_file
             # TODO: Embed imported funtion onto the lambda file structure
-            lambda_filename = 'codehook/skeletons/lambda_handler_rest.py'
-            lambda_handler_name = (
-                os.path.splitext(os.path.basename(lambda_filename))[0]
-                + ".lambda_handler"
-            )
+            lambda_path = "codehook/skeletons/stripe/"
+            lambda_filename = "lambda_handler_rest"
+            lambda_handler_name = lambda_filename + ".lambda_handler"
             lambda_role_name = IAM_ROLE_NAME
             lambda_function_name = self.lambda_name
             api_name = self.api_name
+            layers = [STRIPE_LAYER]
             progress.update(task, advance=100)
 
             print("Checking for IAM role for Lambda...")
@@ -50,11 +53,15 @@ class Deployer:
             )
             # destination file without the full path
             deployment_package = self.lambda_wrapper.create_deployment_package(
-                lambda_filename, os.path.basename(lambda_filename)
+                lambda_path
             )
             progress.update(task, advance=100)
             lambda_function_arn = self.lambda_wrapper.create_function(
-                lambda_function_name, lambda_handler_name, iam_role, deployment_package
+                lambda_function_name,
+                lambda_handler_name,
+                iam_role,
+                deployment_package,
+                layers,
             )
             progress.update(task, advance=200)
 
