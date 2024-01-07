@@ -23,7 +23,7 @@ poetry run codehook [COMMAND]
 
 Useful commands:
 ```
-codehook deploy tests/lambda_handler_rest.py
+codehook deploy webhook
 codehook list
 ```
 

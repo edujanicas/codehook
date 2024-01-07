@@ -1,6 +1,7 @@
 import json
 import logging
 import stripe
+import handler
 
 # This is a public sample test API key.
 # Don’t submit any personally identifiable information in requests made with this key.
@@ -11,11 +12,10 @@ stripe.api_key = "sk_test_26PHem9AhJZvU623DfE1x4sd"
 # If you are testing with the CLI, find the secret by running 'stripe listen'
 # If you are using an endpoint defined with the API or dashboard, look in your webhook settings
 # at https://dashboard.stripe.com/webhooks
-endpoint_secret = "whsec_..."
+endpoint_secret = None
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
 
 def lambda_handler(event, context):
     """
@@ -43,7 +43,7 @@ def lambda_handler(event, context):
     if body:
         payload = body
     else:
-        payload = ""
+        payload = "{}"
 
     try:
         event = json.loads(payload)
@@ -87,9 +87,8 @@ def lambda_handler(event, context):
         pass
 
     # TODO
-    # Handle the event
-    # Handle the event
-    # Handle the event
+    # Inject code here
+    exec(handler.handler_logic)
 
     response = {
         "statusCode": response_code,
