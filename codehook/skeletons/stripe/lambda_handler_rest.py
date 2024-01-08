@@ -17,6 +17,7 @@ endpoint_secret = None
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 def lambda_handler(event, context):
     """
     Handles requests that are passed through an Amazon API Gateway REST API.
@@ -69,8 +70,8 @@ def lambda_handler(event, context):
         # Otherwise use the basic event deserialized with json
         sig_header = headers.get("stripe-signature")
         try:
-            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret) # type: ignore
-        except stripe.error.SignatureVerificationError as e: # type: ignore
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)  # type: ignore
+        except stripe.error.SignatureVerificationError as e:  # type: ignore
             print("⚠️  Webhook signature verification failed." + str(e))
             return {
                 "statusCode": response_code,
@@ -86,9 +87,8 @@ def lambda_handler(event, context):
             }
         pass
 
-    # TODO
     # Inject code here
-    exec(handler.handler_logic)
+    response_code = handler.handler_logic()
 
     response = {
         "statusCode": response_code,
