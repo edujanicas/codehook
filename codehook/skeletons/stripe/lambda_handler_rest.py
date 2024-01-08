@@ -53,6 +53,7 @@ def lambda_handler(event, context):
         response_code = 400
         return {
             "statusCode": response_code,
+            "headers": {"Content-Type": "*/*"},
             "body": json.dumps(
                 {
                     "success": False,
@@ -75,6 +76,7 @@ def lambda_handler(event, context):
             print("⚠️  Webhook signature verification failed." + str(e))
             return {
                 "statusCode": response_code,
+                "headers": {"Content-Type": "*/*"},
                 "body": json.dumps(
                     {
                         "input": event,
@@ -92,6 +94,7 @@ def lambda_handler(event, context):
 
     response = {
         "statusCode": response_code,
+        "headers": {"Content-Type": "*/*"},
         "body": json.dumps(
             {
                 "input": event,
