@@ -129,7 +129,7 @@ class Lambda:
         return response
 
     def create_function(
-        self, function_name, handler_name, iam_role, deployment_package, layers
+        self, function_name, handler_name, iam_role, deployment_package, layers, environment
     ):
         """
         Deploys a Lambda function.
@@ -153,7 +153,8 @@ class Lambda:
                 Code={"ZipFile": deployment_package},
                 Publish=True,
                 Tags=self.tags,
-                Layers=layers
+                Layers=layers,
+                Environment=environment,
             )
             function_arn = response["FunctionArn"]
             waiter = self.lambda_client.get_waiter("function_active_v2")

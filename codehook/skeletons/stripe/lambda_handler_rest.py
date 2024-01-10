@@ -2,11 +2,12 @@ import json
 import logging
 import stripe
 import handler
+import os
 
 # This is a public sample test API key.
 # Don’t submit any personally identifiable information in requests made with this key.
 # Sign in to see your own test API key embedded in code samples.
-stripe.api_key = "sk_test_26PHem9AhJZvU623DfE1x4sd"
+stripe.api_key = os.getenv('API_KEY')
 
 # Replace this endpoint secret with your endpoint's unique secret
 # If you are testing with the CLI, find the secret by running 'stripe listen'
