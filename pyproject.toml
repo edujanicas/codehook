@@ -18,6 +18,7 @@ python-dotenv = "^1.0.0"
 rich = "^13.5.2"
 requests = "^2.31.0"
 stripe = "^7.6.0"
+pytest = "^7.4.4"
 
 
 [build-system]
