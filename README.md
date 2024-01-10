@@ -157,7 +157,7 @@ codehook [COMMAND]
 
 Useful commands:
 ```
-codehook deploy webhook
+codehook deploy codehook/tests/handler.py
 codehook list
 ```
 

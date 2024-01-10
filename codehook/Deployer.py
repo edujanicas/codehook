@@ -11,8 +11,8 @@ STRIPE_LAYER = "arn:aws:lambda:us-east-1:764755761259:layer:stripe_layer:4"
 
 
 class Deployer:
-    def __init__(self, basic_file, name, rest_wrapper, lambda_wrapper):
-        self.basic_file = basic_file
+    def __init__(self, file, name, rest_wrapper, lambda_wrapper):
+        self.file = file
         self.lambda_name = name
         self.api_name = name
         self.rest_wrapper = rest_wrapper
@@ -25,13 +25,17 @@ class Deployer:
         with Progress(
             transient=True,
         ) as progress:
-            task = progress.add_task("[blue]Creating codehook files...", total=200)
+            task = progress.add_task("[blue]Creating codehook files...", total=300)
             with tempfile.TemporaryDirectory() as tmpdirname:
                 print("Created temporary directory", tmpdirname)
                 progress.update(task, advance=100)
 
                 shutil.copytree("codehook/skeletons/stripe", tmpdirname, dirs_exist_ok=True)
                 print("Copied skeleton files to temporary directory", tmpdirname)
+                progress.update(task, advance=100)
+
+                shutil.copy(self.file, tmpdirname + "handler.py")
+                print("Copied custom handler to temporary directory", tmpdirname)
                 progress.update(task, advance=100)
 
                 task = progress.add_task(
