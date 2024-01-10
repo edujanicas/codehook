@@ -5,10 +5,14 @@ from rich.progress import Progress
 import time
 import tempfile
 import shutil
+import configparser
 
-IAM_ROLE_NAME = "CODEHOOK_LAMBDA_ROLE"
-STRIPE_LAYER = "arn:aws:lambda:us-east-1:764755761259:layer:stripe_layer:4"
-STRIPE_API_KEY = "sk_test_26PHem9AhJZvU623DfE1x4sd"
+config = configparser.ConfigParser()
+config.read("config.cfg")
+
+IAM_ROLE_NAME = config["default"]["iam_role_name"]
+STRIPE_LAYER = config["default"]["stripe_layer"]
+STRIPE_API_KEY = config["default"]["stripe_api_key"]
 
 
 class Deployer:

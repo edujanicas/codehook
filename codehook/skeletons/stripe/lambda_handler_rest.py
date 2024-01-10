@@ -7,7 +7,7 @@ import os
 # This is a public sample test API key.
 # Don’t submit any personally identifiable information in requests made with this key.
 # Sign in to see your own test API key embedded in code samples.
-stripe.api_key = os.getenv('API_KEY')
+stripe.api_key = os.getenv("API_KEY")
 
 # Replace this endpoint secret with your endpoint's unique secret
 # If you are testing with the CLI, find the secret by running 'stripe listen'
@@ -91,7 +91,7 @@ def lambda_handler(event, context):
         pass
 
     # Inject code here
-    response_code = handler.handler_logic()
+    (response_code, body) = handler.handler_logic()
 
     response = {
         "statusCode": response_code,

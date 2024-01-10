@@ -1,3 +1,4 @@
 def handler_logic():
     print("Handler logic test")
-    return 200
+    return (200, "Handler logic test")
+
