@@ -72,7 +72,8 @@ def reconfigure():
 @app.command()
 def deploy(file: str, name: str = ""):
     """
-    Deploy the function in FILE, optionally with a custom --name
+    Deploy the function in FILE, optionally with a custom --name. 
+    If no custom name is given, the function will inherit the file name
     """
     api_wrapper, lambda_wrapper = init_aws()
 
