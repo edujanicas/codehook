@@ -5,10 +5,8 @@ description = ""
 authors = ["Eduardo Janicas <edujanicas@icloud.com>"]
 readme = "README.md"
 
-
 [tool.poetry.scripts]
 codehook = "codehook.main:app"
-
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -19,7 +17,6 @@ rich = "^13.5.2"
 requests = "^2.31.0"
 stripe = "^7.6.0"
 pytest = "^7.4.4"
-
 
 [build-system]
 requires = ["poetry-core"]
