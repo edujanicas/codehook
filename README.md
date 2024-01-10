@@ -133,9 +133,12 @@ Codehook is a Python project that relies heavily on Typer and Boto3, with a few 
    ```sh
    poetry install
    ```
-4. Enter your API in `config.js`
+4. Enter your AWS API Key in `codehook_settings.json`
    ```js
-   const API_KEY = 'ENTER YOUR API';
+    {
+        "api_key": "API_1234",
+        "app_function": "your_module.app"
+    }
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
