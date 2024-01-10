@@ -26,7 +26,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">codehook</h3>
 
   <p align="center">
     Webhook logic and infrastructure automated
@@ -75,9 +75,19 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]](https://codehook.ai)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+There are many ways to extend the capabilities of your favourite SaaS tools, and webhooks are my favourite. Webhooks are the foundation of modern API development. They enable us to react to changes in our systems, an incoming text message, a successful payment, or that latest pull request no matter our stack. [1](https://webhooks.fyi/)
+
+During my time in Stripe, I found that some users were confortable in getting a handler up and running in 30 minutes, others had to navigate weeks of company approvals to get the infrastructure to run one, and others simply did not know what to do. [2](user survey)
+
+I think this tool will make webhooks easy for everyone, once and for all. Here's why:
+- Your time should be focused on creating something amazing, and truly unique business logic. The infra to do it isn't unique
+- You shouldn't be doing the same tasks over and over like creating a webhook boilerplate from scratch
+- You should be able to run your code in your environments when you have control over then
+- You shouldn't be blocked from running your code elsewhere if you want because of company buorocracy
+
+Codehook aims to help you all of the above: an open source tool to help you build, test, deploy and host (optionally) webhook handlers 🚀
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -85,14 +95,9 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 
 ### Built With
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![Python][python.py]][python-url]
+* [![Typer][typer.py]][typer-url]
+* [![AWS][aws.py]][aws-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -101,27 +106,32 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
+Codehook is a Python project that relies heavily on Typer and Boto3, with a few additional dependencies. You can install all the packaged dependencies using Poetry.
+
+* Python 3.11+
+  ```
+  Installing Python is generally easy, and nowadays many Linux and UNIX distributions include a recent Python. If you do need to install Python and aren't confident about the task you can find a few notes on the [BeginnersGuide/Download](https://wiki.python.org/moin/BeginnersGuide/Download) wiki page, but installation is unremarkable on most platforms.
   ```
 
-### Installation
+* Poetry
+  ```sh
+  pip install poetry
+  ```
 
-1. Get a free API Key at [https://example.com](https://example.com)
+### Configuration
+
+1. Get an AWS API Key at [https://example.com](https://example.com)
 2. Clone the repo
    ```sh
    git clone https://github.com/edujanicas/codehook.git
    ```
-3. Install NPM packages
+3. Install pip packages
    ```sh
-   npm install
+   poetry install
    ```
 4. Enter your API in `config.js`
    ```js
@@ -137,21 +147,9 @@ This is an example of how to list things you need to use the software and how to
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-1. Install Poetry 
-
+Run the CLI
 ```
-pip install poetry
-```
-
-2. Install all dependencies
-
-```
-poetry install
-```
-
-3. Run the CLI
-```
-poetry run codehook [COMMAND]
+codehook [COMMAND]
 ```
 
 Useful commands:
@@ -194,6 +192,11 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+Running the CLI locacally while contributing:
+```
+poetry run codehook [COMMAND]
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -210,7 +213,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - edujanicas@icloud.com
 
 Project Link: [https://github.com/edujanicas/codehook](https://github.com/edujanicas/codehook)
 
@@ -242,24 +245,14 @@ Project Link: [https://github.com/edujanicas/codehook](https://github.com/edujan
 [license-shield]: https://img.shields.io/github/license/edujanicas/codehook.svg?style=for-the-badge
 [license-url]: https://github.com/edujanicas/codehook/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
+[linkedin-url]: https://linkedin.com/in/edujanicas
 [product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[python.py]: https://img.shields.io/badge/python-yellow
+[python-url]: https://python.org/
+[typer.py]: https://img.shields.io/badge/typer-black
+[typer-url]: https://https://typer.tiangolo.com/
+[aws.py]: https://img.shields.io/badge/aws-orange
+[aws-url]: https://aws.amazon.com/
 
 INBOX
 GOODTIME
