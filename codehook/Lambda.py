@@ -129,7 +129,13 @@ class Lambda:
         return response
 
     def create_function(
-        self, function_name, handler_name, iam_role, deployment_package, layers, environment
+        self,
+        function_name,
+        handler_name,
+        iam_role,
+        deployment_package,
+        layers,
+        environment,
     ):
         """
         Deploys a Lambda function.
@@ -269,6 +275,6 @@ class Lambda:
                     if function["Description"] == str(self.tags):
                         functions.append(function)
             return functions
-        except ClientError as err:
+        except ClientError:
             logger.exception("Couldn't list REST APIs.")
             raise

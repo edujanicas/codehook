@@ -130,7 +130,7 @@ class APIGateway:
         try:
             lambda_client.add_permission(
                 FunctionName=lambda_function_arn,
-                StatementId=f"demo-invoke",
+                StatementId="demo-invoke",
                 Action="lambda:InvokeFunction",
                 Principal="apigateway.amazonaws.com",
                 SourceArn=source_arn,

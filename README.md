@@ -95,9 +95,10 @@ Codehook aims to help you all of the above: an open source tool to help you buil
 
 ### Built With
 
-* [![Python][python.py]][python-url]
-* [![Typer][typer.py]][typer-url]
-* [![AWS][aws.py]][aws-url]
+[![Python][python.py]][python-url]
+[![Typer][typer.py]][typer-url]
+[![AWS][aws.py]][aws-url]
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -188,9 +189,10 @@ Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+3. Run ruff as a linter/formatter
+4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the Branch (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request
 
 Running the CLI locacally while contributing:
 ```
@@ -253,9 +255,3 @@ Project Link: [https://github.com/edujanicas/codehook](https://github.com/edujan
 [typer-url]: https://https://typer.tiangolo.com/
 [aws.py]: https://img.shields.io/badge/aws-orange
 [aws-url]: https://aws.amazon.com/
-
-INBOX
-GOODTIME
-@
-Your account needs to be set-up. Please contact us to get started.
-Email GoodTime

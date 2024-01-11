@@ -1,16 +1,16 @@
-import typer
-import boto3
-
 import os.path
 from pathlib import Path
-from typing_extensions import Annotated
-from typing import Optional
-from rich import print
+
+import boto3
+import typer
 from dotenv import load_dotenv
-from .Deployer import Deployer
+from rich import print
+from typing_extensions import Annotated
+
 from .APIGateway import APIGateway
+from .Deployer import Deployer
+from .helpers import Events, Source
 from .Lambda import Lambda
-from .helpers import Source, Events
 
 load_dotenv()
 app = typer.Typer()
@@ -48,7 +48,7 @@ def configure():
     """
     Configure your local environment to connect to your AWS account
     """
-    if boto3.resource('s3'):
+    if boto3.resource("s3"):
         print(
             """
 </> Welcome to codehook! </>
@@ -69,28 +69,28 @@ def reconfigure():
 
 
 @app.command()
-def deploy(file: Annotated[Path, typer.Option(
-    exists=True,
-    file_okay=True,
-    dir_okay=False,
-    writable=False,
-    readable=True,
-    resolve_path=True,
-)],
+def deploy(
+    file: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            writable=False,
+            readable=True,
+            resolve_path=True,
+        ),
+    ],
     name: str = None,
-    source: Annotated[
-        Source, typer.Option(case_sensitive=False)
-] = Source.stripe,
-    enabled_events: Annotated[
-        Events, typer.Option(case_sensitive=False)
-] = Events.all
+    source: Annotated[Source, typer.Option(case_sensitive=False)] = Source.stripe,
+    enabled_events: Annotated[Events, typer.Option(case_sensitive=False)] = Events.all,
 ):
     """
-    This is the main command for codehook. Deploy takes a function and deploys it as a webhook handler, 
-    taking care of all the boilerplate and infrastructure for you. Depending on the source, the function can be using 
+    This is the main command for codehook. Deploy takes a function and deploys it as a webhook handler,
+    taking care of all the boilerplate and infrastructure for you. Depending on the source, the function can be using
     different skeletons.
 
-    Deploys the handler in FILE as a webhook handler for SOURCE, optionally with a custom --name. 
+    Deploys the handler in FILE as a webhook handler for SOURCE, optionally with a custom --name.
     If no custom name is given, the handler will inherit the file name
     """
 
@@ -100,7 +100,8 @@ def deploy(file: Annotated[Path, typer.Option(
         name = os.path.splitext(os.path.basename(file))[0]
 
     print(
-        f"Creating a [blue]{source.value}[/blue] endpoint that listens to [blue]{enabled_events.value}[/blue] events...")
+        f"Creating a [blue]{source.value}[/blue] endpoint that listens to [blue]{enabled_events.value}[/blue] events..."
+    )
     print(f"Deploying [blue]{file}[/blue] as [blue]{name}[/blue] :rocket:")
 
     rest_deployer = Deployer(file, name, api_wrapper, lambda_wrapper)
@@ -118,29 +119,29 @@ def list():
     """
     api_wrapper, lambda_wrapper = init_aws()
 
-    print(f"Listing all codehook endpoints...")
+    print("Listing all codehook endpoints...")
     endpoints = api_wrapper.get_rest_apis()
 
     if endpoints:
         print(endpoints)
     else:
-        print(f"[bold red]No codehook endpoints[/bold red]")
+        print("[bold red]No codehook endpoints[/bold red]")
 
-    print(f"Listing all lambda functions...")
+    print("Listing all lambda functions...")
     lambdas = lambda_wrapper.list_functions()
     if lambdas:
         print(lambdas)
     else:
-        print(f"[bold red]No lambda functions[/bold red]")
+        print("[bold red]No lambda functions[/bold red]")
 
 
 @app.command()
 def delete(
-    lambda_function_name: Annotated[str, typer.Option(
-        help="Name of the Lambda function to delete")] = None,
-    api_id: Annotated[str, typer.Option(
-        help="Name of the Rest API to delete")] = None,
-    delete_all: Annotated[bool, typer.Option("--all")] = False
+    lambda_function_name: Annotated[
+        str, typer.Option(help="Name of the Lambda function to delete")
+    ] = None,
+    api_id: Annotated[str, typer.Option(help="Name of the Rest API to delete")] = None,
+    delete_all: Annotated[bool, typer.Option("--all")] = False,
 ):
     """
     Delete the REST API, AWS Lambda function, and security role
@@ -149,30 +150,28 @@ def delete(
 
     if delete_all:
         print("[bold red]Deleting all functions and endpoints[/bold red]")
-        print(f"Listing all codehook endpoints...")
+        print("Listing all codehook endpoints...")
         endpoints = api_wrapper.get_rest_apis()
 
         if endpoints:
             for endpoint in endpoints:
-                api_id = endpoint['id']
+                api_id = endpoint["id"]
                 api_wrapper.delete_rest_api(api_id)
-                print(
-                    f"[bold red]Deleting [/bold red][blue]{api_id}[/blue]"
-                )
+                print(f"[bold red]Deleting [/bold red][blue]{api_id}[/blue]")
         else:
-            print(f"[bold red]No codehook endpoints[/bold red]")
+            print("[bold red]No codehook endpoints[/bold red]")
 
-        print(f"Listing all lambda functions...")
+        print("Listing all lambda functions...")
         lambdas = lambda_wrapper.list_functions()
         if lambdas:
             for function in lambdas:
-                lambda_function_name = function['FunctionName']
+                lambda_function_name = function["FunctionName"]
                 lambda_wrapper.delete_function(lambda_function_name)
                 print(
                     f"[bold red]Deleting [/bold red][blue]{lambda_function_name}[/blue][bold red]"
                 )
         else:
-            print(f"[bold red]No lambda functions[/bold red]")
+            print("[bold red]No lambda functions[/bold red]")
     else:
         print(
             f"[bold red]Deleting [/bold red][blue]{lambda_function_name}[/blue][bold red] and [/bold red][blue]{api_id}[/blue]"
@@ -181,7 +180,7 @@ def delete(
         lambda_wrapper.delete_function(lambda_function_name)
         api_wrapper.delete_rest_api(api_id)
 
-    print(f"[bold red]Deletion complete[/bold red]")
+    print("[bold red]Deletion complete[/bold red]")
 
 
 if __name__ == "__main__":

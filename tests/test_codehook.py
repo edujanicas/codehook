@@ -3,8 +3,11 @@ from codehook.main import app
 
 runner = CliRunner()
 
+
 def test_app():
-    result = runner.invoke(app, ["deploy", "--file", "tests/handler.py", "--name", "handler"])
+    result = runner.invoke(
+        app, ["deploy", "--file", "tests/handler.py", "--name", "handler"]
+    )
     assert result.exit_code == 0
     assert "Deployment complete 🚀" in result.stdout
     assert "Function name:" in result.stdout

@@ -10,13 +10,14 @@ endpoint_secret = os.getenv("ENDPOINT_SECRET")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 def lambda_handler(event, context):
     """
-    Handles POST requests that are passed through an Amazon API Gateway REST API, 
+    Handles POST requests that are passed through an Amazon API Gateway REST API,
         with a JSON payload consisting of an event object.
-    Quickly returns a successful status code (2xx) prior to any complex logic 
-        that could cause a timeout. 
-    For example, you must return a 200 response before updating a customer’s 
+    Quickly returns a successful status code (2xx) prior to any complex logic
+        that could cause a timeout.
+    For example, you must return a 200 response before updating a customer’s
         invoice as paid in your accounting system.
 
     :param event: The event dict sent by Amazon API Gateway that contains all of the
