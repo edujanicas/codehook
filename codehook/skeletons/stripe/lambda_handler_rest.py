@@ -4,26 +4,20 @@ import stripe
 import handler
 import os
 
-# This is a public sample test API key.
-# Don’t submit any personally identifiable information in requests made with this key.
-# Sign in to see your own test API key embedded in code samples.
 stripe.api_key = os.getenv("API_KEY")
-
-# Replace this endpoint secret with your endpoint's unique secret
-# If you are testing with the CLI, find the secret by running 'stripe listen'
-# If you are using an endpoint defined with the API or dashboard, look in your webhook settings
-# at https://dashboard.stripe.com/webhooks
-endpoint_secret = None
+endpoint_secret = os.getenv("ENDPOINT_SECRET")
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-
 def lambda_handler(event, context):
     """
-    Handles requests that are passed through an Amazon API Gateway REST API.
-    GET, POST, PUT and DELETE requests all result in success codes that echo back input
-    parameters in a message.
+    Handles POST requests that are passed through an Amazon API Gateway REST API, 
+        with a JSON payload consisting of an event object.
+    Quickly returns a successful status code (2xx) prior to any complex logic 
+        that could cause a timeout. 
+    For example, you must return a 200 response before updating a customer’s 
+        invoice as paid in your accounting system.
 
     :param event: The event dict sent by Amazon API Gateway that contains all of the
                   request data.
