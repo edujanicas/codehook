@@ -7,13 +7,11 @@ from dotenv import load_dotenv
 from rich import print
 from typing_extensions import Annotated
 
-from .APIGateway import APIGateway
-from .Deployer import Deployer
+from .aws_apigateway import APIGateway
+from .aws_lambda import Lambda
+from .deployer import Deployer
 from .helpers import Events, Source
-from .Lambda import Lambda
 
-load_dotenv()
-app = typer.Typer()
 
 CODEHOOK_WELCOME_MESSAGE = """
 </> Welcome to codehook! </>
@@ -24,6 +22,16 @@ Once the user has been created, see [blue link=https://docs.aws.amazon.com/IAM/l
 
 If you have the [blue link=http://aws.amazon.com/cli/]AWS CLI[/blue link] installed, then you can use the [bold]aws configure[/bold] command to configure your credentials file:
 """
+
+CODEHOOK_CONFIGURED_MESSAGE = """
+</> Welcome to codehook! </>
+
+Your AWS account is already configured. 
+Run [bold]codehook reconfigure[/bold] for instructions on setting up a new AWS account.
+"""
+
+load_dotenv()
+app = typer.Typer()
 
 
 def init_aws() -> tuple[APIGateway, Lambda]:
@@ -46,18 +54,24 @@ def callback():
 @app.command()
 def configure():
     """
-    Configure your local environment to connect to your AWS account
+    We try to to use your AWS account configuration automatically. 
+    If you have the AWS CLI installed, then you can use the aws configure command to configure your credentials file.
+    
+    Boto3 will look in several locations when searching for credentials. 
+    The mechanism in which Boto3 looks for credentials is to search through a list of possible locations and stop as soon as it finds credentials. 
+    The order in which Boto3 searches for credentials is:
+        1. Passing credentials as parameters in the boto.client() method
+        2. Passing credentials as parameters when creating a Session object
+        3. Environment variables
+        4. Shared credential file (~/.aws/credentials)
+        5. AWS config file (~/.aws/config)
+        6. Assume Role provider
+        7. Boto2 config file (/etc/boto.cfg and ~/.boto)
+        8. Instance metadata service on an Amazon EC2 instance that has an IAM role configured.
     """
-    if boto3.resource("s3"):
-        print(
-            """
-</> Welcome to codehook! </>
-
-Your AWS account is already configured. Run [bold]codehook reconfigure[/bold] for instructions on setting up a new AWS account.
-            """
-        )
-    else:
-        print(CODEHOOK_WELCOME_MESSAGE)
+    print(CODEHOOK_CONFIGURED_MESSAGE) if boto3.resource("s3") else print(
+        CODEHOOK_WELCOME_MESSAGE
+    )
 
 
 @app.command()
