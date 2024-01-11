@@ -164,4 +164,4 @@ cython_debug/
 ./vscode
 
 # Secrets
-.config.cfg
+config.cfg
