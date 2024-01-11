@@ -134,7 +134,7 @@ Codehook is a Python project that relies heavily on Typer and Boto3, with a few 
    poetry install
    ```
 4. Duplicate `config.cfg.example` to enter your API Keys in `config.cfg`
-   ```python
+   ```sh
   stripe_api_key = sk_test_***
    ```
 
