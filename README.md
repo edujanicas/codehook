@@ -146,17 +146,93 @@ Codehook is a Python project that relies heavily on Typer and Boto3, with a few 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+### The simplest case
 
-Run the CLI
-```
-codehook [COMMAND]
+Create a file named `handler.py` with the following content:
+
+```py
+def handler_logic(body):
+    return (200, "Hello, codehook!")
 ```
 
-Useful commands:
+Run the codehook CLI
+
+```sh
+foo@bar:~$ codehook deploy --file handler.py
 ```
-codehook deploy codehook/tests/handler.py
-codehook list
+
+The end of the response will contain information about the endpoint:
+
+```sh
+REST API created, URL is :
+        https://123456789.execute-api.us-east-1.amazonaws.com/prod/codehook
+Deployment complete 🚀
+Function name: handler
+API ID: 123456789
+```
+
+Make a POST request to the endpoint that was just created
+
+```sh
+foo@bar:~$ curl -X PUT https://123456789.execute-api.us-east-1.amazonaws.com/prod/codehook | json_pp
+```
+
+The body of your response should be:
+
+```json
+{
+  "body" : "Handler logic skeleton",
+  "method" : "POST",
+  "status_code" : 200
+}
+```
+
+Congratulations! You just deployed a live webhook endpoint 🎉 
+
+You can clean up by running 
+
+```sh
+foo@bar:~$ codehook delete --all
+```
+
+### A slightly more complex example
+
+Your function handler receives a body parameter from the webhook event. 
+For this example, create a file named `echo.py` with the following content:
+
+```py
+def handler_logic(body):
+    return (200, body)
+```
+
+Run the codehook CLI. You can specify a function name, and the source for the event. Currently codehook supports 
+Stripe webhook events.
+
+```sh
+codehook deploy --file echo.py --name echo_function --source stripe --enabled-events '*'
+```
+
+Make a POST request to the endpoint that was just created, and pass a request body this time:
+
+```sh
+foo@bar:~$ curl -X PUT -H "Content-Type: application/json" -d '{"hello":"codehook"}' \
+  https://123456789.execute-api.us-east-1.amazonaws.com/prod/codehook | json_pp
+```
+
+The body of your response this time should echo back what you sent:
+
+```json
+{
+  "body" : "{\"hello\":\"codehook\"}",
+  "method" : "PUT",
+  "status_code" : 200
+}
+```
+
+You can also delete your resources one by one by running 
+
+```sh
+foo@bar:~$ codehook delete --lambda-function-name echo_function --api-id 123456789
 ```
 
 _For more examples, please refer to the [Documentation](https://example.com)_

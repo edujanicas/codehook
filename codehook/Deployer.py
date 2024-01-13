@@ -39,7 +39,7 @@ class Deployer:
             print("Copied skeleton files to temporary directory", tmpdirname)
             progress.update(task, advance=100)
 
-            shutil.copy(self.file, tmpdirname + "handler.py")
+            shutil.copy(self.file, tmpdirname + "/handler.py")
             print("Copied custom handler to temporary directory", tmpdirname)
             progress.update(task, advance=100)
 

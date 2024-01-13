@@ -86,18 +86,16 @@ def lambda_handler(event, context):
         pass
 
     # Inject code here
-    (response_code, body) = handler.handler_logic()
+    (response_code, response_body) = handler.handler_logic(body)
 
     response = {
         "statusCode": response_code,
         "headers": {"Content-Type": "*/*"},
         "body": json.dumps(
             {
-                "input": event,
+                "status_code": response_code,
                 "method": http_method,
-                "query_string": query_string,
-                "headers": headers,
-                "body": body,
+                "body": response_body,
             }
         ),
     }
