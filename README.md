@@ -164,11 +164,11 @@ foo@bar:~$ codehook deploy --file handler.py
 The end of the response will contain information about the endpoint:
 
 ```sh
-REST API created, URL is :
-        https://123456789.execute-api.us-east-1.amazonaws.com/prod/codehook
 Deployment complete 🚀
 Function name: handler
 API ID: 123456789
+Webhook URL: https:/123456789.execute-api.us-east-1.amazonaws.com/prod/codehook
+Webhook ID: we_abcdefghijkl
 ```
 
 Make a POST request to the endpoint that was just created

@@ -1,8 +1,9 @@
 import io
 import json
 import logging
-import zipfile
 import pathlib
+import zipfile
+
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)

@@ -1,11 +1,11 @@
-from rich import print
+import configparser
+import shutil
+import tempfile
+import time
 
 import boto3
+from rich import print
 from rich.progress import Progress
-import time
-import tempfile
-import shutil
-import configparser
 
 config = configparser.ConfigParser()
 config.read("config.cfg")
@@ -14,14 +14,17 @@ IAM_ROLE_NAME = config["default"]["iam_role_name"]
 STRIPE_LAYER = config["default"]["stripe_layer"]
 STRIPE_API_KEY = config["default"]["stripe_api_key"]
 
-
 class Deployer:
-    def __init__(self, file, name, rest_wrapper, lambda_wrapper):
+    def __init__(
+        self, file, name, rest_wrapper, lambda_wrapper, stripe_wrapper, enabled_events
+    ):
         self.file = file
         self.lambda_name = name
         self.api_name = name
         self.rest_wrapper = rest_wrapper
         self.lambda_wrapper = lambda_wrapper
+        self.stripe_wrapper = stripe_wrapper
+        self.enabled_events = enabled_events
 
     def deploy(self):
         """
@@ -104,4 +107,13 @@ class Deployer:
             progress.update(task, advance=100)
             print(f"REST API created, URL is :\n\t{api_url}")
 
-            return (lambda_function_name, api_id)
+            task = progress.add_task(
+                "[blue]Setting up endpoint in Stripe...", total=100
+            )
+
+            print("Configuring the webhook endpoint in Stripe")
+            webhook_id = self.stripe_wrapper.create(self.enabled_events, api_url)
+            progress.update(task, advance=100)
+            print(f"Webhook endpoint {webhook_id} created")
+
+            return (lambda_function_name, api_id, api_url, webhook_id)

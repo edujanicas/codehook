@@ -1,8 +1,9 @@
 import json
 import logging
-import stripe
-import handler
 import os
+
+import handler
+import stripe
 
 stripe.api_key = os.getenv("API_KEY")
 endpoint_secret = os.getenv("ENDPOINT_SECRET")

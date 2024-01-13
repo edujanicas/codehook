@@ -11,7 +11,7 @@ from .aws_apigateway import APIGateway
 from .aws_lambda import Lambda
 from .deployer import Deployer
 from .helpers import Events, Source
-
+from .stripe import Stripe
 
 CODEHOOK_WELCOME_MESSAGE = """
 </> Welcome to codehook! </>
@@ -34,14 +34,15 @@ load_dotenv()
 app = typer.Typer()
 
 
-def init_aws() -> tuple[APIGateway, Lambda]:
+def init() -> tuple[APIGateway, Lambda, Stripe]:
     iam_resource = boto3.resource("iam")
     lambda_client = boto3.client("lambda")
     apigateway_client = boto3.client("apigateway")
     api_wrapper = APIGateway(apigateway_client)
     lambda_wrapper = Lambda(lambda_client, iam_resource)
+    stripe_wrapper = Stripe()
 
-    return api_wrapper, lambda_wrapper
+    return api_wrapper, lambda_wrapper, stripe_wrapper
 
 
 @app.callback()
@@ -54,11 +55,11 @@ def callback():
 @app.command()
 def configure():
     """
-    We try to to use your AWS account configuration automatically. 
+    We try to to use your AWS account configuration automatically.
     If you have the AWS CLI installed, then you can use the aws configure command to configure your credentials file.
-    
-    Boto3 will look in several locations when searching for credentials. 
-    The mechanism in which Boto3 looks for credentials is to search through a list of possible locations and stop as soon as it finds credentials. 
+
+    Boto3 will look in several locations when searching for credentials.
+    The mechanism in which Boto3 looks for credentials is to search through a list of possible locations and stop as soon as it finds credentials.
     The order in which Boto3 searches for credentials is:
         1. Passing credentials as parameters in the boto.client() method
         2. Passing credentials as parameters when creating a Session object
@@ -97,7 +98,9 @@ def deploy(
     ],
     name: str = None,
     source: Annotated[Source, typer.Option(case_sensitive=False)] = Source.stripe,
-    enabled_events: Annotated[Events, typer.Option(case_sensitive=False)] = Events.all,
+    enabled_events: Annotated[list[Events], typer.Option(case_sensitive=False)] = list(
+        Events.all
+    ),
 ):
     """
     This is the main command for codehook. Deploy takes a function and deploys it as a webhook handler,
@@ -108,22 +111,27 @@ def deploy(
     If no custom name is given, the handler will inherit the file name
     """
 
-    api_wrapper, lambda_wrapper = init_aws()
+    api_wrapper, lambda_wrapper, stripe_wrapper = init()
 
     if not name:
         name = os.path.splitext(os.path.basename(file))[0]
 
     print(
-        f"Creating a [blue]{source.value}[/blue] endpoint that listens to [blue]{enabled_events.value}[/blue] events..."
+        f"Creating a [blue]{source.value}[/blue] endpoint that listens to [blue]{enabled_events}[/blue] events..."
     )
     print(f"Deploying [blue]{file}[/blue] as [blue]{name}[/blue] :rocket:")
 
-    rest_deployer = Deployer(file, name, api_wrapper, lambda_wrapper)
-    lambda_function_name, api_id = rest_deployer.deploy()
+    events = [event.value for event in enabled_events]
+    rest_deployer = Deployer(
+        file, name, api_wrapper, lambda_wrapper, stripe_wrapper, events
+    )
+    lambda_function_name, api_id, webhook_url, webhook_id = rest_deployer.deploy()
 
     print("[bold green]Deployment complete[/bold green] :rocket:")
     print(f"Function name: [blue]{lambda_function_name}[/blue]")
     print(f"API ID: [blue]{api_id}[/blue]")
+    print(f"Webhook URL: [blue]{webhook_url}[/blue]")
+    print(f"Webhook ID: [blue]{webhook_id}[/blue]")
 
 
 @app.command()
@@ -131,7 +139,7 @@ def list():
     """
     List all the endpoints currently deployed by Codehook
     """
-    api_wrapper, lambda_wrapper = init_aws()
+    api_wrapper, lambda_wrapper, stripe_wrapper = init()
 
     print("Listing all codehook endpoints...")
     endpoints = api_wrapper.get_rest_apis()
@@ -148,6 +156,13 @@ def list():
     else:
         print("[bold red]No lambda functions[/bold red]")
 
+    print("Listing all webhook endpoints...")
+    webhooks = stripe_wrapper.list_endpoints()
+    if webhooks:
+        print(webhooks)
+    else:
+        print("[bold red]No webhook endpoints[/bold red]")
+
 
 @app.command()
 def delete(
@@ -155,12 +170,15 @@ def delete(
         str, typer.Option(help="Name of the Lambda function to delete")
     ] = None,
     api_id: Annotated[str, typer.Option(help="Name of the Rest API to delete")] = None,
+    webhook_id: Annotated[
+        str, typer.Option(help="Name of the Webhook Endpoint to delete")
+    ] = None,
     delete_all: Annotated[bool, typer.Option("--all")] = False,
 ):
     """
     Delete the REST API, AWS Lambda function, and security role
     """
-    api_wrapper, lambda_wrapper = init_aws()
+    api_wrapper, lambda_wrapper, stripe_wrapper = init()
 
     if delete_all:
         print("[bold red]Deleting all functions and endpoints[/bold red]")
@@ -186,13 +204,26 @@ def delete(
                 )
         else:
             print("[bold red]No lambda functions[/bold red]")
+
+        print("Listing all webhook endpoints...")
+        webhooks = stripe_wrapper.list_endpoints()
+        if webhooks:
+            for webhook in webhooks:
+                webhook_id = webhook["id"]
+                stripe_wrapper.delete_endpoint(webhook_id)
+                print(
+                    f"[bold red]Deleting [/bold red][blue]{webhook_id}[/blue][bold red]"
+                )
+        else:
+            print("[bold red]No webhook endpoints[/bold red]")
     else:
         print(
-            f"[bold red]Deleting [/bold red][blue]{lambda_function_name}[/blue][bold red] and [/bold red][blue]{api_id}[/blue]"
+            f"[bold red]Deleting [/bold red][blue]{lambda_function_name}[/blue][bold red], [/bold red][blue]{api_id}[/blue] and [/bold red][blue]{webhook_id}[/blue]"
         )
 
         lambda_wrapper.delete_function(lambda_function_name)
         api_wrapper.delete_rest_api(api_id)
+        stripe_wrapper.delete_endpoint(webhook_id)
 
     print("[bold red]Deletion complete[/bold red]")
 
