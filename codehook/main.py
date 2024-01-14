@@ -7,11 +7,8 @@ from dotenv import load_dotenv
 from rich import print
 from typing_extensions import Annotated
 
-from .aws_apigateway import APIGateway
-from .aws_lambda import Lambda
-from .deployer import Deployer
-from .helpers import Events, Source
-from .stripe import Stripe
+from .core import CodehookCore
+from .model import CloudName, Events, SourceName
 
 CODEHOOK_WELCOME_MESSAGE = """
 </> Welcome to codehook! </>
@@ -32,17 +29,7 @@ Run [bold]codehook reconfigure[/bold] for instructions on setting up a new AWS a
 
 load_dotenv()
 app = typer.Typer()
-
-
-def init() -> tuple[APIGateway, Lambda, Stripe]:
-    iam_resource = boto3.resource("iam")
-    lambda_client = boto3.client("lambda")
-    apigateway_client = boto3.client("apigateway")
-    api_wrapper = APIGateway(apigateway_client)
-    lambda_wrapper = Lambda(lambda_client, iam_resource)
-    stripe_wrapper = Stripe()
-
-    return api_wrapper, lambda_wrapper, stripe_wrapper
+codehook_core = CodehookCore(CloudName.aws)
 
 
 @app.callback()
@@ -97,7 +84,9 @@ def deploy(
         ),
     ],
     name: str = None,
-    source: Annotated[Source, typer.Option(case_sensitive=False)] = Source.stripe,
+    source: Annotated[
+        SourceName, typer.Option(case_sensitive=False)
+    ] = SourceName.stripe,
     enabled_events: Annotated[list[Events], typer.Option(case_sensitive=False)] = list(
         Events.all
     ),
@@ -110,28 +99,10 @@ def deploy(
     Deploys the handler in FILE as a webhook handler for SOURCE, optionally with a custom --name.
     If no custom name is given, the handler will inherit the file name
     """
-
-    api_wrapper, lambda_wrapper, stripe_wrapper = init()
-
     if not name:
         name = os.path.splitext(os.path.basename(file))[0]
 
-    print(
-        f"Creating a [blue]{source.value}[/blue] endpoint that listens to [blue]{enabled_events}[/blue] events..."
-    )
-    print(f"Deploying [blue]{file}[/blue] as [blue]{name}[/blue] :rocket:")
-
-    events = [event.value for event in enabled_events]
-    rest_deployer = Deployer(
-        file, name, api_wrapper, lambda_wrapper, stripe_wrapper, events
-    )
-    lambda_function_name, api_id, webhook_url, webhook_id = rest_deployer.deploy()
-
-    print("[bold green]Deployment complete[/bold green] :rocket:")
-    print(f"Function name: [blue]{lambda_function_name}[/blue]")
-    print(f"API ID: [blue]{api_id}[/blue]")
-    print(f"Webhook URL: [blue]{webhook_url}[/blue]")
-    print(f"Webhook ID: [blue]{webhook_id}[/blue]")
+    codehook_core.deploy(file, name, source, enabled_events)
 
 
 @app.command()
@@ -139,29 +110,7 @@ def list():
     """
     List all the endpoints currently deployed by Codehook
     """
-    api_wrapper, lambda_wrapper, stripe_wrapper = init()
-
-    print("Listing all codehook endpoints...")
-    endpoints = api_wrapper.get_rest_apis()
-
-    if endpoints:
-        print(endpoints)
-    else:
-        print("[bold red]No codehook endpoints[/bold red]")
-
-    print("Listing all lambda functions...")
-    lambdas = lambda_wrapper.list_functions()
-    if lambdas:
-        print(lambdas)
-    else:
-        print("[bold red]No lambda functions[/bold red]")
-
-    print("Listing all webhook endpoints...")
-    webhooks = stripe_wrapper.list_endpoints()
-    if webhooks:
-        print(webhooks)
-    else:
-        print("[bold red]No webhook endpoints[/bold red]")
+    codehook_core.list()
 
 
 @app.command()
@@ -178,54 +127,7 @@ def delete(
     """
     Delete the REST API, AWS Lambda function, and security role
     """
-    api_wrapper, lambda_wrapper, stripe_wrapper = init()
-
-    if delete_all:
-        print("[bold red]Deleting all functions and endpoints[/bold red]")
-        print("Listing all codehook endpoints...")
-        endpoints = api_wrapper.get_rest_apis()
-
-        if endpoints:
-            for endpoint in endpoints:
-                api_id = endpoint["id"]
-                api_wrapper.delete_rest_api(api_id)
-                print(f"[bold red]Deleting [/bold red][blue]{api_id}[/blue]")
-        else:
-            print("[bold red]No codehook endpoints[/bold red]")
-
-        print("Listing all lambda functions...")
-        lambdas = lambda_wrapper.list_functions()
-        if lambdas:
-            for function in lambdas:
-                lambda_function_name = function["FunctionName"]
-                lambda_wrapper.delete_function(lambda_function_name)
-                print(
-                    f"[bold red]Deleting [/bold red][blue]{lambda_function_name}[/blue][bold red]"
-                )
-        else:
-            print("[bold red]No lambda functions[/bold red]")
-
-        print("Listing all webhook endpoints...")
-        webhooks = stripe_wrapper.list_endpoints()
-        if webhooks:
-            for webhook in webhooks:
-                webhook_id = webhook["id"]
-                stripe_wrapper.delete_endpoint(webhook_id)
-                print(
-                    f"[bold red]Deleting [/bold red][blue]{webhook_id}[/blue][bold red]"
-                )
-        else:
-            print("[bold red]No webhook endpoints[/bold red]")
-    else:
-        print(
-            f"[bold red]Deleting [/bold red][blue]{lambda_function_name}[/blue][bold red], [/bold red][blue]{api_id}[/blue] and [/bold red][blue]{webhook_id}[/blue]"
-        )
-
-        lambda_wrapper.delete_function(lambda_function_name)
-        api_wrapper.delete_rest_api(api_id)
-        stripe_wrapper.delete_endpoint(webhook_id)
-
-    print("[bold red]Deletion complete[/bold red]")
+    codehook_core.delete(lambda_function_name, api_id, webhook_id, delete_all)
 
 
 if __name__ == "__main__":
