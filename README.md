@@ -111,33 +111,21 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-Codehook is a Python project that relies heavily on Typer and Boto3, with a few additional dependencies. You can install all the packaged dependencies using Poetry.
+Codehook is a Python project that relies heavily on Typer and Boto3, with a few additional dependencies. 
 
-* Python 3.11+
-  ```
-  Installing Python is generally easy, and nowadays many Linux and UNIX distributions include a recent Python. If you do need to install Python and aren't confident about the task you can find a few notes on the [BeginnersGuide/Download](https://wiki.python.org/moin/BeginnersGuide/Download) wiki page, but installation is unremarkable on most platforms.
-  ```
+Installing Python is generally easy, and nowadays many Linux and UNIX distributions include a recent Python. If you do need to install Python and aren't confident about the task you can find a few notes on the [BeginnersGuide/Download](https://wiki.python.org/moin/BeginnersGuide/Download) wiki page, but installation is unremarkable on most platforms.
 
-* Poetry
-  ```sh
-  pip install poetry
-  ```
 
 ### Configuration
 
 1. Get an AWS API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/edujanicas/codehook.git
-   ```
-3. Install pip packages
-   ```sh
-   poetry install
-   ```
-4. Duplicate `config.cfg.example` to enter your API Keys in `config.cfg`
-   ```sh
-   stripe_api_key = sk_test_
-   ```
+2. Get the API Key for your source system, such as Stripe.
+3. Make sure to set the following environment variables:
+```sh
+  AWS_ACCESS_KEY_ID=
+  AWS_SECRET_ACCESS_KEY=
+  STRIPE_API_KEY=
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -263,17 +251,48 @@ Contributions are what make the open source community such an amazing place to l
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Run ruff as a linter/formatter
-4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-5. Push to the Branch (`git push origin feature/AmazingFeature`)
-6. Open a Pull Request
+1. Clone the Project
 
-Running the CLI locacally while contributing:
+```sh
+  git clone https://github.com/edujanicas/codehook.git
 ```
-poetry run codehook [COMMAND]
+
+2. Create your Feature Branch
+
+```sh
+  git checkout -b feature/AmazingFeature
 ```
+
+3. Install all the dependencies (Using poetry)
+
+```sh
+  poetry install
+```
+
+4. Copy `.env.example` into a `.env` file and fill in your API Keys
+```sh
+  cp .env.example .env
+```
+
+5. Run the CLI locally
+
+```sh
+  poetry run codehook [COMMAND]
+```
+
+6. Commit your Changes
+
+```sh
+  git commit -m 'Add some AmazingFeature'
+```
+
+7. Push to the Branch
+
+```sh
+  git push origin feature/AmazingFeature
+```
+
+8. Open a Pull Request
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
