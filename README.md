@@ -232,10 +232,9 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Support for additional event sources
+- [ ] Improve code generation capability
+- [ ] Support for additional cloud providers
 
 See the [open issues](https://github.com/edujanicas/codehook/issues) for a full list of proposed features (and known issues).
 
@@ -248,8 +247,8 @@ See the [open issues](https://github.com/edujanicas/codehook/issues) for a full 
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+If you have a suggestion that would make this better, please clone the repo, start a new branch, and create a pull request. You can also simply open an issue with the tag "enhancement".
+And don't forget to give the project a star!
 
 1. Clone the Project
 
@@ -310,7 +309,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - edujanicas@icloud.com
+Eduardo Janicas - edujanicas@icloud.com
 
 Project Link: [https://github.com/edujanicas/codehook](https://github.com/edujanicas/codehook)
 
@@ -321,9 +320,7 @@ Project Link: [https://github.com/edujanicas/codehook](https://github.com/edujan
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* [Soulfir](https://github.com/soulfir)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
