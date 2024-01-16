@@ -1,11 +1,11 @@
 import os.path
 from pathlib import Path
+from typing import List, Optional
 
 import boto3
 import typer
 from dotenv import load_dotenv
 from rich import print
-from typing import List, Optional
 from typing_extensions import Annotated
 
 from .core import CodehookCore
@@ -72,6 +72,35 @@ def reconfigure():
 
 
 @app.command()
+def create(
+    command: Annotated[str, typer.Option()],
+    name: Annotated[str, typer.Option()],
+    source: Annotated[
+        SourceName, typer.Option(case_sensitive=False)
+    ] = SourceName.stripe,
+    enabled_events: Annotated[
+        Optional[List[Events]], typer.Option(case_sensitive=False)
+    ] = list(Events.all),
+):
+    """
+    This is the main command for codehook if you plan on using natural language to generate a function.
+    Create takes a string, creates a Python function, and deploys it as a webhook handler,
+    taking care of all the boilerplate and infrastructure for you. Depending on the source, the function can be using
+    different skeletons.
+
+    Deploys the handler in FILE as a webhook handler for SOURCE, optionally with a custom --name.
+    If no custom name is given, the handler will inherit the file name
+    """
+
+    print("[bold red]Not implemented yet[/bold red]")
+    print("Please use the deploy command instead")
+
+    # TODO: Add a way to create a function from a string
+    file = codehook_core.create(command, name, source, enabled_events)
+    # codehook_core.deploy(file, name, source, enabled_events)
+
+
+@app.command()
 def deploy(
     file: Annotated[
         Path,
@@ -84,13 +113,13 @@ def deploy(
             resolve_path=True,
         ),
     ],
-    name: str = None,
+    name: Annotated[str, typer.Option()] = None,
     source: Annotated[
         SourceName, typer.Option(case_sensitive=False)
     ] = SourceName.stripe,
-    enabled_events: Annotated[Optional[List[Events]], typer.Option(case_sensitive=False)] = list(
-        Events.all
-    ),
+    enabled_events: Annotated[
+        Optional[List[Events]], typer.Option(case_sensitive=False)
+    ] = list(Events.all),
 ):
     """
     This is the main command for codehook. Deploy takes a function and deploys it as a webhook handler,

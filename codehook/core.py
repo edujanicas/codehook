@@ -30,6 +30,32 @@ class CodehookCore:
 
         self.cloud = AWS()
 
+    
+    def create(
+        self,
+        command: str,
+        name: str,
+        source: SourceName,
+        enabled_events: list[Events],
+    ):
+        """
+        Creates a python function that performs the logic described in COMMAND .
+
+        Args:
+            command (str): The logic to generate function code.
+            name (str): The name of the created function.
+            source (SourceName): The name of the source.
+            enabled_events (list[Events]): The list of enabled events.
+
+        Returns:
+            file: The path to the file containing the function to be deployed.
+        """
+
+        # TODO: Add a way to create a function from a string
+        file = None
+
+        return file
+
     def deploy(
         self,
         file: Path,
