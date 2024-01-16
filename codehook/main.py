@@ -5,6 +5,7 @@ import boto3
 import typer
 from dotenv import load_dotenv
 from rich import print
+from typing import List, Optional
 from typing_extensions import Annotated
 
 from .core import CodehookCore
@@ -87,7 +88,7 @@ def deploy(
     source: Annotated[
         SourceName, typer.Option(case_sensitive=False)
     ] = SourceName.stripe,
-    enabled_events: Annotated[list[Events], typer.Option(case_sensitive=False)] = list(
+    enabled_events: Annotated[Optional[List[Events]], typer.Option(case_sensitive=False)] = list(
         Events.all
     ),
 ):
