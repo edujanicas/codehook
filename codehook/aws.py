@@ -445,12 +445,12 @@ class AWS(Cloud):
         self.stripe_layer = os.getenv("STRIPE_LAYER")
         self.stripe_api_key = os.getenv("STRIPE_API_KEY")
 
-        lambda_client = boto3.client("lambda")
-        apigateway_client = boto3.client("apigateway")
+        self.lambda_client = boto3.client("lambda")
+        self.apigateway_client = boto3.client("apigateway")
 
         self.iam_resource = boto3.resource("iam")
-        self.api_wrapper = APIGateway(apigateway_client)
-        self.lambda_wrapper = Lambda(lambda_client, self.iam_resource)
+        self.api_wrapper = APIGateway(self.apigateway_client)
+        self.lambda_wrapper = Lambda(self.lambda_client, self.iam_resource)
 
     def create_function(self, name: str, path: str):
         # Step 2.1: Create IAM Role
