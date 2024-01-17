@@ -87,7 +87,7 @@ def lambda_handler(event, context):
         pass
 
     # Inject code here
-    (response_code, response_body) = handler.handler_logic(body)
+    (response_code, response_body) = handler.handler_logic(event)
 
     response = {
         "statusCode": response_code,
