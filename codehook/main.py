@@ -13,6 +13,7 @@ from .model import CloudName, Events, SourceName
 
 CODEHOOK_WELCOME_MESSAGE = """
 </> Welcome to codehook! </>
+
 Codehook relies on having your AWS account running on the background. So, before using Codehook, you need to set up authentication credentials for your AWS account using either the [blue link=https://console.aws.amazon.com/iam/home]IAM Console[/blue link] or the AWS CLI. 
 
 For instructions about how to create a user using the IAM Console, see [blue link=https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console]Creating IAM users[/blue link]. 
