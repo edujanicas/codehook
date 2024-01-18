@@ -111,6 +111,35 @@ class Lambda:
 
         return role, True
 
+    def delete_iam_lambda_role(self, iam_role_name):
+        """
+        Deletes an existing IAM role. If a role with the specified name does not exists, 
+        it is raises an error instead.
+
+        :param iam_role_name: The name of the role to create.
+        :return: True or None depending os success.
+        """
+        policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        role = self.get_iam_role(iam_role_name)
+        if role is None:
+            print(f"IAM role {iam_role_name} does not exist.")
+            raise
+        try:
+            self.iam_resource.Policy(policy_arn).detach_role(RoleName=iam_role_name)
+            print(f"Deleted policy {policy_arn}.")
+            role = self.iam_resource.Role(iam_role_name).delete()
+            print(f"Deleted role {iam_role_name}.")
+        except ClientError as err:
+            print(
+                "Couldn't delete IAM role %s. Here's why: %s: %s",
+                iam_role_name,
+                err.response["Error"]["Code"],
+                err.response["Error"]["Message"],
+            )
+            raise
+
+        return True
+
     def create_function(
         self,
         function_name,
