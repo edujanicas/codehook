@@ -17,22 +17,20 @@ class TestStripe:
         assert result == []
 
     def test_create_webhooks(self, my_stripe):
-        
-        events = ['*']
+        events = ["*"]
         url = "https://example.com/webhook"
-        
+
         result = my_stripe.create_webhook(events, url)
         assert result.__contains__("we_")
 
         my_stripe.delete_webhook(result)
 
     def test_delete_webhooks(self, my_stripe):
-        
-        events = ['*']
+        events = ["*"]
         url = "https://example.com/webhook"
-        
+
         result = my_stripe.create_webhook(events, url)
         my_stripe.delete_webhook(result)
-        
+
         result = my_stripe.list_webhooks()
         assert result == []
