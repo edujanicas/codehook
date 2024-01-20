@@ -113,7 +113,7 @@ class Lambda:
 
     def delete_iam_lambda_role(self, iam_role_name):
         """
-        Deletes an existing IAM role. If a role with the specified name does not exists, 
+        Deletes an existing IAM role. If a role with the specified name does not exists,
         it is raises an error instead.
 
         :param iam_role_name: The name of the role to create.
@@ -271,7 +271,6 @@ class APIGateway:
     def __init__(self, apigateway_client):
         self.tags = {"codehook": "true"}
         self.apigateway_client = apigateway_client
-        self.tags = {"codehook": "true"}
 
     def create_rest_api(
         self,
@@ -431,6 +430,8 @@ class APIGateway:
     def delete_rest_api(self, api_id):
         """
         Deletes a REST API and all of its resources from Amazon API Gateway.
+        NOTE: AWS only supports 1 request every 30 seconds per account
+        TODO: Handle too many requests gracefully
 
         :param apigateway_client: The Boto3 Amazon API Gateway client.
         :param api_id: The ID of the REST API.
