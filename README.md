@@ -165,12 +165,11 @@ Make a POST request to the endpoint that was just created
 foo@bar:~$ curl -X PUT https://123456789.execute-api.us-east-1.amazonaws.com/prod/codehook | json_pp
 ```
 
-The body of your response should be:
+The body of your response should a tuple containing:
 
 ```json
 {
   "body" : "Handler logic skeleton",
-  "method" : "POST",
   "status_code" : 200
 }
 ```
@@ -212,7 +211,6 @@ The body of your response this time should echo back what you sent:
 ```json
 {
   "body" : "{\"hello\":\"codehook\"}",
-  "method" : "PUT",
   "status_code" : 200
 }
 ```
