@@ -64,7 +64,6 @@ class TestDeployCommand:
 
         result = runner.invoke(app, ["delete", "--all"])
         assert result.exit_code == 0
-        time.sleep(30)  # AWS only supports 1 request every 30 seconds per account
 
     def test_unknown_event(self):
         result = runner.invoke(
@@ -146,7 +145,6 @@ class TestDeleteCommand:
         assert "Listing all lambda functions..." in result.stdout
         assert "Listing all webhook endpoints..." in result.stdout
         assert "Deletion complete" in result.stdout
-        time.sleep(30)  # AWS only supports 1 request every 30 seconds per account
 
     def test_delete_fail(self):
         result = runner.invoke(app, ["list", "--fail"])
