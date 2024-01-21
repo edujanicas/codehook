@@ -139,7 +139,6 @@ class TestAPI:
         assert result in endpoint_ids
 
         my_api.delete_rest_api(result)
-        time.sleep(30)  # AWS only supports 1 request every 30 seconds per account
         my_lambda.delete_function(function_id)
 
     def test_delete_api(self, my_api, my_lambda, my_account_id):
@@ -166,7 +165,6 @@ class TestAPI:
         )
 
         my_api.delete_rest_api(result)
-        time.sleep(30)  # AWS only supports 1 request every 30 seconds per account
         my_lambda.delete_function(function_id)
         endpoints = my_api.get_rest_apis()
         endpoint_ids = [endpoint["id"] for endpoint in endpoints]
@@ -206,7 +204,6 @@ class TestAPI:
         assert "prod" in url
 
         my_api.delete_rest_api(api_id)
-        time.sleep(30)  # AWS only supports 1 request every 30 seconds per account
         my_lambda.delete_function(function_id)
 
 
@@ -238,7 +235,6 @@ class TestAWS:
         assert api_id in result
         my_aws.delete_api(api_id)
         my_aws.delete_function(function_arn)
-        time.sleep(30)  # AWS only supports 1 request every 30 seconds per account
 
     def test_delete_api(self, my_aws):
         function_arn = my_aws.create_function(
@@ -250,5 +246,3 @@ class TestAWS:
 
         result = my_aws.list_apis()
         assert api_id not in result
-
-        time.sleep(30)  # AWS only supports 1 request every 30 seconds per account

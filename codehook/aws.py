@@ -439,6 +439,12 @@ class APIGateway:
         try:
             self.apigateway_client.delete_rest_api(restApiId=api_id)
             print(f"Deleted REST API {api_id}.")
+        except self.apigateway_client.exceptions.TooManyRequestsException:
+            print(
+                f"Too many requests to delete REST API {api_id}. Trying after 30 seconds..."
+            )
+            time.sleep(30)
+            self.delete_rest_api(api_id)
         except ClientError:
             print(f"Couldn't delete REST API {api_id}.")
             raise
@@ -477,8 +483,8 @@ class AWS(Cloud):
 
         self.lambda_client = boto3.client("lambda")
         self.apigateway_client = boto3.client("apigateway")
-
         self.iam_resource = boto3.resource("iam")
+
         self.api_wrapper = APIGateway(self.apigateway_client)
         self.lambda_wrapper = Lambda(self.lambda_client, self.iam_resource)
 
