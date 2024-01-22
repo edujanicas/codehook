@@ -1,5 +1,4 @@
 import os
-import time
 
 import boto3
 import pytest
@@ -64,7 +63,6 @@ class TestLambda:
         name = "test_function"
         role, _ = my_lambda.create_iam_role_for_lambda("CODEHOOK_LAMBDA_ROLE")
         package = my_lambda.create_deployment_package("./codehook/skeletons/stripe")
-        layers = [os.getenv("STRIPE_LAYER")]
         env_vars = {"Variables": {"API_KEY": os.getenv("STRIPE_API_KEY")}}
 
         result = my_lambda.create_function(
@@ -72,7 +70,6 @@ class TestLambda:
             name,
             role,
             package,
-            layers,
             env_vars,
         )
         assert "arn:aws:lambda" in result
@@ -87,14 +84,12 @@ class TestLambda:
         name = "test_function"
         role, _ = my_lambda.create_iam_role_for_lambda("CODEHOOK_LAMBDA_ROLE")
         package = my_lambda.create_deployment_package("./codehook/skeletons/stripe")
-        layers = [os.getenv("STRIPE_LAYER")]
         env_vars = {"Variables": {"API_KEY": os.getenv("STRIPE_API_KEY")}}
         result = my_lambda.create_function(
             name,
             name,
             role,
             package,
-            layers,
             env_vars,
         )
 
@@ -114,14 +109,12 @@ class TestAPI:
         name = "test_function"
         role, _ = my_lambda.create_iam_role_for_lambda("CODEHOOK_LAMBDA_ROLE")
         package = my_lambda.create_deployment_package("./codehook/skeletons/stripe")
-        layers = [os.getenv("STRIPE_LAYER")]
         env_vars = {"Variables": {"API_KEY": os.getenv("STRIPE_API_KEY")}}
         function_id = my_lambda.create_function(
             name,
             name,
             role,
             package,
-            layers,
             env_vars,
         )
 
@@ -145,14 +138,12 @@ class TestAPI:
         name = "test_function"
         role, _ = my_lambda.create_iam_role_for_lambda("CODEHOOK_LAMBDA_ROLE")
         package = my_lambda.create_deployment_package("./codehook/skeletons/stripe")
-        layers = [os.getenv("STRIPE_LAYER")]
         env_vars = {"Variables": {"API_KEY": os.getenv("STRIPE_API_KEY")}}
         function_id = my_lambda.create_function(
             name,
             name,
             role,
             package,
-            layers,
             env_vars,
         )
         result = my_api.create_rest_api(
@@ -174,14 +165,12 @@ class TestAPI:
         name = "test_function"
         role, _ = my_lambda.create_iam_role_for_lambda("CODEHOOK_LAMBDA_ROLE")
         package = my_lambda.create_deployment_package("./codehook/skeletons/stripe")
-        layers = [os.getenv("STRIPE_LAYER")]
         env_vars = {"Variables": {"API_KEY": os.getenv("STRIPE_API_KEY")}}
         function_id = my_lambda.create_function(
             name,
             name,
             role,
             package,
-            layers,
             env_vars,
         )
 
