@@ -1,3 +1,4 @@
+import os
 import os.path
 from pathlib import Path
 from typing import List, Optional
@@ -75,7 +76,7 @@ def reconfigure():
 @app.command()
 def create(
     command: Annotated[str, typer.Option()],
-    name: Annotated[str, typer.Option()],
+    name: Annotated[str, typer.Option()] = "handler",
     source: Annotated[
         SourceName, typer.Option(case_sensitive=False)
     ] = SourceName.stripe,
@@ -92,13 +93,9 @@ def create(
     Deploys the handler in FILE as a webhook handler for SOURCE, optionally with a custom --name.
     If no custom name is given, the handler will inherit the file name
     """
-
-    print("[bold red]Not implemented yet[/bold red]")
-    print("Please use the deploy command instead")
-
-    # TODO: Add a way to create a function from a string
-    file = codehook_core.create(command, name, source, enabled_events)
-    # codehook_core.deploy(file, name, source, enabled_events)
+    codehook_core.create(command, source, enabled_events) # Creates the handler.py function
+    codehook_core.deploy('handler.py', name, source, enabled_events)
+    os.remove('handler.py')
 
 
 @app.command()

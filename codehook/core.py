@@ -10,6 +10,7 @@ from rich.progress import Progress
 from .aws import AWS
 from .model import CloudName, Events, SourceName
 from .sources.stripe import Stripe
+from .openai import LLMProxy
 
 
 class CodehookCore:
@@ -29,12 +30,12 @@ class CodehookCore:
         self.stripe_wrapper = Stripe(self.stripe_api_key)
 
         self.cloud = AWS()
+        self.llm_proxy = LLMProxy()
 
     
     def create(
         self,
         command: str,
-        name: str,
         source: SourceName,
         enabled_events: list[Events],
     ):
@@ -43,18 +44,24 @@ class CodehookCore:
 
         Args:
             command (str): The logic to generate function code.
-            name (str): The name of the created function.
             source (SourceName): The name of the source.
             enabled_events (list[Events]): The list of enabled events.
 
         Returns:
-            file: The path to the file containing the function to be deployed.
+            file: The file containing the function to be deployed.
         """
+        print(f"Generating code with the command: {command}")
+        code = self.llm_proxy.create_code(command)
+        # Code comes back as ```python ... ``` so we need to remove the markdown
+        print(f"Generated code: {code[9:-3]}")
 
-        # TODO: Add a way to create a function from a string
-        file = None
+        print("Creating hander")
+        f = open("handler.py", "w")
+        f.write(code[9:-3])
+        f.close()
+        print(f"File created: {f}")
 
-        return file
+        return f
 
     def deploy(
         self,
