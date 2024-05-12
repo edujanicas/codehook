@@ -32,11 +32,23 @@ class Lambda:
         """
         directory = pathlib.Path(source_path)
 
+        # Install dependencies in the package directory
+        command = (
+            f"pip install --target {source_path} -r {source_path}/requirements.txt"
+        )
+        print(f"Installing dependencies with {command}")
+        os.system(command)
+
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w") as zipped:
             for source_file in directory.iterdir():
                 zipped.write(source_file, arcname=source_file.name)
         buffer.seek(0)
+
+        # Clean up the package directory
+        os.system(f"rm -rf {source_path}/*/")
+        os.system(f"rm {source_path}/typing_extensions.py")
+
         return buffer.read()
 
     def get_iam_role(self, iam_role_name):
@@ -146,7 +158,6 @@ class Lambda:
         handler_name,
         iam_role,
         deployment_package,
-        layers,
         environment,
     ):
         """
@@ -171,7 +182,6 @@ class Lambda:
                 Code={"ZipFile": deployment_package},
                 Publish=True,
                 Tags=self.tags,
-                Layers=layers,
                 Environment=environment,
             )
             function_arn = response["FunctionArn"]
@@ -478,7 +488,6 @@ class AWS(Cloud):
 
         load_dotenv()
         self.iam_role_name = os.getenv("IAM_ROLE_NAME")
-        self.stripe_layer = os.getenv("STRIPE_LAYER")
         self.stripe_api_key = os.getenv("STRIPE_API_KEY")
 
         self.lambda_client = boto3.client("lambda")
@@ -516,7 +525,6 @@ class AWS(Cloud):
             lambda_handler_name,
             iam_role,
             deployment_package,
-            [self.stripe_layer],
             env_vars,
         )
         print(f"Lambda function created: {lambda_function_arn}")
